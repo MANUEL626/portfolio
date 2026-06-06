@@ -1,128 +1,12 @@
 from flask import Flask, render_template
 
 from config import Config
+from data.projects import PROJECT_FILTERS, PROJECTS
+from data.site_config import SITE_CONFIG
+
 
 app = Flask(__name__)
 app.config.from_object(Config)
-
-# Configuration affichée dans les templates (header, footer, liens)
-SITE_CONFIG = {
-    "header_initials": "TE",
-    "footer_initials": "TE",
-    "author_name": "Têvi Emmanuel LAWSON-AKPLAKA",
-    "author_title": "Full Stack Developer",
-    "site_name": "Portfolio",
-    "year": "2025",
-    "github_url": "https://github.com/MANUEL626",
-    "linkedin_url": None,
-    "twitter_url": None,
-    "contact_url": "https://wa.me/22878941116",
-    "contact_label": "Me contacter (WhatsApp)",
-    "resume_url": None,
-}
-
-# Projets réels — résumé pour la carte, description pour la modale
-# icon = icône Material reflétant le projet (thème), pas les technos
-PROJECTS = [
-    {
-        "type": "web",
-        "type_label": "Application web",
-        "title": "Stewdy",
-        "summary": "Plateforme de soutien scolaire avec un coach IA personnalisé : cours, flashcards, QCM et exercices.",
-        "description": "Participation à l'élaboration de Stewdy, plateforme d'étude avec accompagnement personnalisé : cours, flashcards, QCM et exercices, le tout avec un coach IA adapté au rythme de l'élève. Développé en Nuxt.js avec Supabase.",
-        "image": None,
-        "placeholder": "web",
-        "image_alt": "Stewdy – plateforme de soutien scolaire",
-        "tags": ["Nuxt.js", "Tailwind", "Supabase"],
-        "github_url": None,
-        "demo_url": "https://app.stewdy.com/",
-        "icon": "school",
-    },
-    {
-        "type": "automation",
-        "type_label": "Automatisation",
-        "title": "Formulaires → Notion & réponses mail",
-        "summary": "Enregistrement des formulaires en base Notion et envoi d’un mail personnalisé à chaque personne qui répond.",
-        "description": "Workflow n8n qui reçoit les soumissions de formulaire, les enregistre dans une base Notion structurée, puis utilise OpenAI pour générer une réponse email personnalisée envoyée via Google Mail à chaque utilisateur.",
-        "image": None,
-        "placeholder": "automation",
-        "image_alt": "Workflow formulaire Notion et mail",
-        "tags": ["n8n", "OpenAI", "Notion", "Google Mail"],
-        "github_url": None,
-        "demo_url": None,
-        "icon": "ballot",
-    },
-    {
-        "type": "automation",
-        "type_label": "Automatisation",
-        "title": "Tri et réponses mail par IA",
-        "summary": "Catégorisation des mails, détection des réponses à faire et génération de réponses personnalisées.",
-        "description": "Scénario Make connecté à Google Mail : chaque mail entrant est catégorisé par OpenAI, les mails nécessitant une réponse ou une relance sont identifiés, et une réponse personnalisée est générée et proposée (ou envoyée).",
-        "image": None,
-        "placeholder": "automation",
-        "image_alt": "Catégorisation et réponses mail",
-        "tags": ["Make", "OpenAI", "Google Mail"],
-        "github_url": None,
-        "demo_url": None,
-        "icon": "mark_email_read",
-    },
-    {
-        "type": "automation",
-        "type_label": "Automatisation",
-        "title": "Pages Softr & Nuxt sur mesure",
-        "summary": "Ajout de pages dans un projet existant et création de pages externes en Nuxt.js.",
-        "description": "Sur un projet existant (Softr, Airtable, Google Sheet), ajout de nouvelles pages sur demande client et création de pages externes sur mesure avec Nuxt.js, le tout orchestré avec Make.",
-        "image": None,
-        "placeholder": "automation",
-        "image_alt": "Projet Softr et Nuxt",
-        "tags": ["Softr", "Nuxt.js", "Make", "Google Sheet", "Airtable"],
-        "github_url": None,
-        "demo_url": None,
-        "icon": "dashboard_customize",
-    },
-    {
-        "type": "automation",
-        "type_label": "Automatisation",
-        "title": "Leads WhatsApp & rapports mensuels",
-        "summary": "Suivi des leads par WhatsApp et rapports mensuels générés via une API externe.",
-        "description": "Chaîne Zapier et Twilio pour la gestion et le suivi des leads via WhatsApp ; Google Form, Sheets et Gmail pour la collecte et le suivi ; génération de rapports mensuels via une API externe.",
-        "image": None,
-        "placeholder": "automation",
-        "image_alt": "Suivi leads WhatsApp",
-        "tags": ["Zapier", "Twilio", "Google Sheets", "Google Mail", "Google Form", "FastAPI"],
-        "github_url": None,
-        "demo_url": None,
-        "icon": "support_agent",
-    },
-    {
-        "type": "automation",
-        "type_label": "Automatisation",
-        "title": "Assistant vocal prise de rendez-vous",
-        "summary": "Assistant vocal IA pour la prise de rendez-vous en location saisonnière.",
-        "description": "Assistant vocal (Vapi) qui dialogue avec les leads pour une location saisonnière : prise de rendez-vous, synchronisation avec Google Agenda et enregistrement dans Airtable, le tout piloté par Make.",
-        "image": None,
-        "placeholder": "automation",
-        "image_alt": "Assistant vocal IA",
-        "tags": ["Make", "Google Agenda", "Airtable", "Vapi"],
-        "github_url": None,
-        "demo_url": None,
-        "icon": "headset_mic",
-    },
-    {
-        "type": "web",
-        "type_label": "Application web",
-        "title": "Up Tech Group",
-        "summary": "Vitrine web pour une agence de transformation digitale.",
-        "description": "Vitrine web pour Up Tech Group, agence orientée transformation digitale (de la conception à l’exécution). Développé avec Nuxt.js.",
-        "image": None,
-        "placeholder": "web",
-        "image_alt": "Up Tech Group – vitrine web",
-        "tags": ["Nuxt.js"],
-        "github_url": None,
-        "demo_url": "https://www.uptech-group.com/",
-        "icon": "public",
-    },
-]
 
 
 @app.route("/")
@@ -130,9 +14,14 @@ def index():
     return render_template(
         "index.html",
         projects=PROJECTS,
+        project_filters=PROJECT_FILTERS,
         config=SITE_CONFIG,
     )
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
+    app.run(
+        debug=app.config["DEBUG"],
+        host=app.config["HOST"],
+        port=app.config["PORT"],
+    )

@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet"/>
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -31,21 +32,11 @@
             },
         }
     </script>
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #101922; }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #137fec33;
-            border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #137fec; }
-    </style>
     {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display transition-colors duration-300 custom-scrollbar">
     <div id="top"></div>
-    <!-- Navigation -->
+
     <header class="sticky top-0 z-50 w-full border-b border-primary/10 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md">
         <div class="container mx-auto px-6 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-2">
@@ -76,7 +67,6 @@
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
     <footer class="mt-20 border-t border-primary/10 bg-white dark:bg-background-dark py-12">
         <div class="container mx-auto px-6">
             <div class="flex flex-col md:flex-row justify-between items-center">
@@ -107,14 +97,12 @@
                     </div>
                     <div class="flex space-x-4 text-xs font-medium text-slate-500">
                         {% if config.resume_url %}<a class="hover:text-primary transition-colors uppercase tracking-widest" href="{{ config.resume_url }}">CV</a>{% endif %}
-                        <!-- <a class="hover:text-primary transition-colors uppercase tracking-widest" href="#">Mentions légales</a> -->
                     </div>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- Retour en haut -->
     <a
         id="back-to-top"
         href="#top"
@@ -125,22 +113,7 @@
         <span class="material-icons">keyboard_arrow_up</span>
     </a>
 
-    <script>
-        (function () {
-            var btn = document.getElementById('back-to-top');
-            if (!btn) return;
-            var threshold = 250;
-
-            function toggle() {
-                if (window.scrollY > threshold) btn.classList.remove('hidden');
-                else btn.classList.add('hidden');
-            }
-
-            window.addEventListener('scroll', toggle, { passive: true });
-            toggle();
-        })();
-    </script>
-
     {% block extra_scripts %}{% endblock %}
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

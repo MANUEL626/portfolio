@@ -1,20 +1,11 @@
-# Environnement virtuel
-.venv/
-venv/
-env/
-
-# Python
 __pycache__/
 *.py[cod]
-*.pyo
+.venv/
+venv/
+.env
 .pytest_cache/
 .coverage
 htmlcov/
-
-# Variables d'environnement (secret key)
-.env
-
-# IDE
+instance/
 .idea/
-*.swp
-*.swo
+.DS_Store

@@ -6,3 +6,5 @@ class Config:
     """Configuration de base."""
     SECRET_KEY = os.environ.get("SECRET_KEY") or "dev-secret-key-change-en-prod"
     DEBUG = os.environ.get("FLASK_DEBUG", "1").lower() in ("1", "true", "yes")
+    HOST = os.environ.get("FLASK_RUN_HOST", "127.0.0.1")
+    PORT = int(os.environ.get("FLASK_RUN_PORT", "5000"))
