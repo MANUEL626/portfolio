@@ -8,6 +8,9 @@
     <meta name="keywords" content="{{ config.seo_keywords }}"/>
     <meta name="author" content="{{ config.author_name }}"/>
     <meta name="robots" content="index, follow"/>
+    {% if config.google_site_verification %}
+    <meta name="google-site-verification" content="{{ config.google_site_verification }}"/>
+    {% endif %}
     <link rel="canonical" href="{{ seo.canonical_url if seo is defined and seo.canonical_url else config.site_url }}"/>
     <meta property="og:locale" content="{{ config.locale | default('fr_FR') }}"/>
     <meta property="og:type" content="{{ seo.type if seo is defined and seo.type else 'website' }}"/>
