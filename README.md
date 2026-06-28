@@ -47,3 +47,19 @@ Les variables disponibles sont documentées dans `.env.example`.
 Les projets sont déclarés dans `data/projects.py`.
 
 Les sections `Mobile` et `Desktop` sont conservées dans `PROJECT_FILTERS` pour les prochains ajouts.
+
+## Ajouter des captures
+
+Place les captures dans `static/image/screenshot/<slug-du-projet>/`.
+
+Formats détectés automatiquement : `.png`, `.jpg`, `.jpeg`, `.webp`, `.gif`.
+
+Exemple :
+
+```text
+static/image/screenshot/veille-concurrentielle-automatisee/img.png
+```
+
+## Domaine personnalisé
+
+Voir `docs/deploiement-domaine.md` pour la checklist de connexion d'un domaine sur Vercel.

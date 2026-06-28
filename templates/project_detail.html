@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.title }} | Étude de cas{% endblock %}
+
+{% block content %}
+<article class="mx-auto max-w-5xl">
+    <a class="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition-colors hover:text-primary dark:text-slate-400" href="{{ back_url }}">
+        <span class="material-icons text-lg">arrow_back</span>
+        Retour aux projets
+    </a>
+
+    <header class="animate-rise mb-12">
+        <div class="mb-4 flex flex-wrap items-center gap-3">
+            <span class="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
+                <span class="material-icons text-sm">{{ project.icon or 'folder' }}</span>
+                {{ project.type_label }}
+            </span>
+            {% if project.status_label %}
+            <span class="status-badge inline-flex items-center gap-1 rounded-full border border-amber-300/30 bg-amber-400/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-300">
+                <span class="material-icons text-sm">construction</span>
+                {{ project.status_label }}
+            </span>
+            {% endif %}
+        </div>
+        <h1 class="text-4xl font-bold leading-tight md:text-6xl">{{ project.title }}</h1>
+        <p class="mt-5 max-w-3xl text-lg leading-8 text-slate-500 dark:text-slate-400">{{ project.summary or project.description }}</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+            {% if project.demo_url %}
+            <a class="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition-colors hover:bg-primary/90" href="{{ project.demo_url }}" target="_blank" rel="noopener">
+                <span class="material-icons text-lg">open_in_new</span>
+                Visiter
+            </a>
+            {% endif %}
+            {% if project.github_url %}
+            <a class="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-5 py-3 text-sm font-semibold transition-colors hover:border-primary hover:text-primary dark:border-slate-700" href="{{ project.github_url }}" target="_blank" rel="noopener">
+                <span class="material-icons text-lg">code</span>
+                Code
+            </a>
+            {% endif %}
+        </div>
+    </header>
+
+    <section class="reveal-on-scroll mb-12 overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+        {% if gallery %}
+        <figure class="aspect-video bg-slate-100 dark:bg-slate-950">
+            <img class="h-full w-full object-cover" src="{{ gallery[0].src }}" alt="{{ gallery[0].alt or project.image_alt or project.title }}"/>
+        </figure>
+        {% else %}
+        <div class="aspect-video bg-slate-100 p-6 dark:bg-slate-950">
+            <div class="flex h-full items-center justify-center rounded-lg border border-dashed border-slate-300 dark:border-slate-700">
+                <div class="text-center">
+                    <span class="material-icons mb-3 text-4xl text-primary">{{ project.icon or 'folder' }}</span>
+                    <p class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ project.image_alt or project.title }}</p>
+                    <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Capture principale à ajouter</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </section>
+
+    <div class="grid gap-8 lg:grid-cols-[1fr_320px]">
+        <div class="space-y-6">
+            {% set case = project.case_study or {} %}
+            {% for item in [
+                ('Contexte', case.context),
+                ('Problème', case.problem),
+                ('Solution', case.solution),
+                ('Mon rôle', case.role)
+            ] %}
+            {% if item[1] %}
+            <section class="reveal-on-scroll rounded-lg border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+                <p class="text-xs font-bold uppercase tracking-wider text-primary">{{ item[0] }}</p>
+                <p class="mt-3 leading-8 text-slate-600 dark:text-slate-300">{{ item[1] }}</p>
+            </section>
+            {% endif %}
+            {% endfor %}
+
+            {% if case.workflow %}
+            <section class="reveal-on-scroll rounded-lg border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+                <p class="text-xs font-bold uppercase tracking-wider text-primary">Workflow</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    {% for step in case.workflow %}
+                    <span class="rounded-full border border-slate-200 px-3 py-1 text-xs font-bold uppercase text-slate-500 dark:border-slate-700 dark:text-slate-300">{{ step }}</span>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            {% if case.results %}
+            <section class="reveal-on-scroll rounded-lg border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+                <p class="text-xs font-bold uppercase tracking-wider text-primary">Résultats obtenus</p>
+                <ul class="mt-4 space-y-3">
+                    {% for result in case.results %}
+                    <li class="flex gap-3 text-slate-600 dark:text-slate-300">
+                        <span class="material-icons text-lg text-primary">check_circle</span>
+                        <span>{{ result }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+            {% endif %}
+
+            <section class="reveal-on-scroll rounded-lg border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+                <p class="text-xs font-bold uppercase tracking-wider text-primary">Galerie</p>
+                <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                    {% for item in gallery %}
+                    <figure class="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800">
+                        <img class="h-full w-full object-cover" src="{{ item.src }}" alt="{{ item.alt or project.title }}"/>
+                    </figure>
+                    {% else %}
+                    <div class="rounded-lg border border-dashed border-slate-300 p-5 text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                        Capture d'écran ou GIF à ajouter.
+                    </div>
+                    <div class="rounded-lg border border-dashed border-slate-300 p-5 text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                        Vue workflow, interface ou résultat à ajouter.
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+
+        <aside class="space-y-6">
+            <section class="reveal-on-scroll rounded-lg border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+                <p class="text-xs font-bold uppercase tracking-wider text-primary">Snapshot</p>
+                <dl class="mt-4 space-y-4">
+                    <div>
+                        <dt class="text-xs font-bold uppercase tracking-wider text-slate-400">Type</dt>
+                        <dd class="mt-1 text-sm font-semibold">{{ project.type_label }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-bold uppercase tracking-wider text-slate-400">Focus</dt>
+                        <dd class="mt-1 text-sm text-slate-600 dark:text-slate-300">{{ project.case_study.problem if project.case_study else project.summary }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-bold uppercase tracking-wider text-slate-400">Statut</dt>
+                        <dd class="mt-1 text-sm font-semibold">{{ project.status_label or 'Présenté dans le portfolio' }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-bold uppercase tracking-wider text-slate-400">Livrable</dt>
+                        <dd class="mt-1 text-sm text-slate-600 dark:text-slate-300">
+                            {% if project.type == 'automation' %}
+                            Workflow métier automatisé
+                            {% elif 'mobile' in project.get('types', []) %}
+                            Application web & mobile
+                            {% else %}
+                            Solution web
+                            {% endif %}
+                        </dd>
+                    </div>
+                </dl>
+            </section>
+
+            <section class="reveal-on-scroll rounded-lg border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+                <p class="text-xs font-bold uppercase tracking-wider text-primary">Technologies</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                    {% for tag in project.tags %}
+                    <span class="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-bold uppercase text-primary">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+            </section>
+
+            {% if related_projects %}
+            <section class="reveal-on-scroll rounded-lg border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+                <p class="text-xs font-bold uppercase tracking-wider text-primary">Projets liés</p>
+                <div class="mt-4 space-y-3">
+                    {% for related in related_projects %}
+                    <a class="block rounded-lg border border-slate-200 p-3 transition-colors hover:border-primary hover:text-primary dark:border-slate-800" href="{{ url_for('project_detail', slug=related.slug) }}">
+                        <span class="text-sm font-bold">{{ related.title }}</span>
+                        <span class="mt-1 block text-xs text-slate-500 dark:text-slate-400">{{ related.type_label }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+        </aside>
+    </div>
+</article>
+{% endblock %}

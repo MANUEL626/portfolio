@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}"/>
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet"/>
     <script id="tailwind-config">
         tailwind.config = {
@@ -39,7 +40,7 @@
 
     <header class="sticky top-0 z-50 w-full border-b border-primary/10 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md">
         <div class="container mx-auto px-6 h-20 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
+            <a class="flex items-center space-x-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-light dark:focus:ring-offset-background-dark" href="{{ url_for('index') }}" aria-label="Retour à l'accueil">
                 <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-xl">
                     {{ config.header_initials | default('JD') }}
                 </div>
@@ -47,7 +48,7 @@
                     <h1 class="font-bold text-lg leading-none">{{ config.author_name | default('John Doe') }}</h1>
                     <p class="text-xs text-primary font-medium tracking-wider uppercase">{{ config.author_title | default('Full Stack Developer') }}</p>
                 </div>
-            </div>
+            </a>
             <div class="flex items-center space-x-4">
                 {% if config.github_url %}
                 <a class="p-2 rounded-full hover:bg-primary/10 text-slate-600 dark:text-slate-400 hover:text-primary transition-all" href="{{ config.github_url }}" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub">

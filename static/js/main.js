@@ -118,6 +118,16 @@
         }
     }
 
+    function parseJsonObject(json) {
+        if (!json) return {};
+        var value = String(json).replace(/&quot;/g, "\"").replace(/&#34;/g, "\"").replace(/&amp;/g, "&");
+        try {
+            return JSON.parse(value || "{}");
+        } catch (error) {
+            return {};
+        }
+    }
+
     function cardMatchesFilter(card, filter) {
         if (filter === "all") return true;
         var types = parseTagsJson(card.getAttribute("data-types"));
@@ -139,12 +149,11 @@
         var observer = new IntersectionObserver(
             function (entries) {
                 entries.forEach(function (entry) {
-                    if (!entry.isIntersecting) return;
-                    entry.target.classList.add("is-visible");
-                    observer.unobserve(entry.target);
+                    if (entry.isIntersecting) entry.target.classList.add("is-visible");
+                    else entry.target.classList.remove("is-visible");
                 });
             },
-            { threshold: 0.16 }
+            { threshold: 0.12 }
         );
 
         items.forEach(function (item, index) {
@@ -153,6 +162,51 @@
         });
 
         return observer;
+    }
+
+    function appendCaseStudySection(container, title, content) {
+        if (!content || (Array.isArray(content) && content.length === 0)) return;
+
+        var section = document.createElement("section");
+        section.className = "rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/50";
+
+        var heading = document.createElement("h3");
+        heading.className = "mb-2 text-xs font-bold uppercase tracking-wider text-primary";
+        heading.textContent = title;
+        section.appendChild(heading);
+
+        if (Array.isArray(content)) {
+            var list = document.createElement("ul");
+            list.className = "space-y-1 text-sm text-slate-600 dark:text-slate-300";
+            content.forEach(function (item) {
+                var li = document.createElement("li");
+                li.className = "flex gap-2";
+                li.innerHTML = "<span class=\"text-primary\">-</span><span></span>";
+                li.querySelector("span:last-child").textContent = item;
+                list.appendChild(li);
+            });
+            section.appendChild(list);
+        } else {
+            var paragraph = document.createElement("p");
+            paragraph.className = "text-sm leading-6 text-slate-600 dark:text-slate-300";
+            paragraph.textContent = content;
+            section.appendChild(paragraph);
+        }
+
+        container.appendChild(section);
+    }
+
+    function renderCaseStudy(container, caseStudy) {
+        if (!container) return;
+        container.innerHTML = "";
+        if (!caseStudy || Object.keys(caseStudy).length === 0) return;
+
+        appendCaseStudySection(container, "Contexte", caseStudy.context);
+        appendCaseStudySection(container, "Problème", caseStudy.problem);
+        appendCaseStudySection(container, "Solution", caseStudy.solution);
+        appendCaseStudySection(container, "Mon rôle", caseStudy.role);
+        appendCaseStudySection(container, "Workflow", caseStudy.workflow);
+        appendCaseStudySection(container, "Résultats", caseStudy.results);
     }
 
     function replayCardReveal(cards) {
@@ -235,10 +289,12 @@
             var title = card.getAttribute("data-title");
             var typeLabel = card.getAttribute("data-type-label");
             var description = card.getAttribute("data-description");
+            var caseStudy = parseJsonObject(card.getAttribute("data-case-study"));
             var statusLabel = card.getAttribute("data-status-label");
             var tagsJson = card.getAttribute("data-tags");
             var githubUrl = card.getAttribute("data-github-url");
             var demoUrl = card.getAttribute("data-demo-url");
+            var detailUrl = card.getAttribute("data-detail-url");
             var icon = card.getAttribute("data-icon") || "folder";
 
             document.getElementById("project-modal-title").textContent = title;
@@ -256,8 +312,10 @@
             var tags = parseTagsJson(tagsJson);
             var tagsEl = document.getElementById("project-modal-tags");
             var modalTechIconsEl = document.getElementById("project-modal-tech-icons");
+            var caseStudyEl = document.getElementById("project-modal-case-study");
             tagsEl.innerHTML = "";
             modalTechIconsEl.innerHTML = "";
+            renderCaseStudy(caseStudyEl, caseStudy);
 
             tags.forEach(function (tag) {
                 var span = document.createElement("span");
@@ -287,6 +345,13 @@
                 demoLink.innerHTML = "<span class=\"material-icons text-lg\">open_in_new</span> Visiter";
                 linksEl.appendChild(demoLink);
             }
+            if (detailUrl) {
+                var detailLink = document.createElement("a");
+                detailLink.href = detailUrl;
+                detailLink.className = "inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 hover:border-primary hover:text-primary transition-colors text-sm font-medium";
+                detailLink.innerHTML = "<span class=\"material-icons text-lg\">article</span> Étude de cas";
+                linksEl.appendChild(detailLink);
+            }
 
             modal.classList.remove("hidden");
             document.body.style.overflow = "hidden";
@@ -309,8 +374,8 @@
             });
 
             card.addEventListener("click", function (event) {
-                event.preventDefault();
                 if (event.target.closest("a")) return;
+                event.preventDefault();
                 openModal(card);
             });
             card.addEventListener("keydown", function (event) {

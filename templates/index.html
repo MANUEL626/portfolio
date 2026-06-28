@@ -4,13 +4,156 @@
 
 {% block content %}
 <section class="mb-16 animate-rise" id="hero">
-    <h2 class="text-4xl md:text-5xl font-bold mb-4">Des solutions digitales <span class="text-primary">sur mesure.</span></h2>
-    <p class="text-lg text-slate-500 dark:text-slate-400 max-w-2xl">
-        Découvrez une sélection d'applications mobiles, plateformes web, outils desktop et workflows d'automatisation conçus pour résoudre des problèmes concrets.
-    </p>
+    <div class="max-w-4xl">
+        <p class="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
+            <span class="material-icons text-sm">auto_awesome</span>
+            Full Stack Developer | IA & automatisation
+        </p>
+        <h2 class="text-4xl md:text-6xl font-bold mb-5 leading-tight">
+            Je construis des applications et automatisations IA qui transforment les idées métier en outils concrets.
+        </h2>
+        <p class="text-lg text-slate-500 dark:text-slate-400 max-w-3xl">
+            Plateformes web, applications mobiles, API Python et workflows intelligents pour réduire le travail manuel, connecter les outils et livrer des solutions utilisables.
+        </p>
+        <div class="mt-8 flex flex-col sm:flex-row gap-3">
+            <a class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition-colors hover:bg-primary/90" href="#projects">
+                <span class="material-icons text-lg">work</span>
+                Voir mes projets
+            </a>
+            <a class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 px-5 py-3 text-sm font-semibold transition-colors hover:border-primary hover:text-primary dark:border-slate-700" href="{{ config.contact_url or '#contact' }}">
+                <span class="material-icons text-lg">chat</span>
+                {{ config.contact_label | default('Me contacter') }}
+            </a>
+        </div>
+        <div class="mt-8 max-w-3xl rounded-lg border border-slate-200 bg-white/70 p-4 dark:border-slate-800 dark:bg-slate-900/70">
+            <div class="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                <span class="material-icons text-base text-primary">build_circle</span>
+                Stack principal
+            </div>
+            <div class="flex flex-wrap gap-2">
+                {% for tag in expertise_tags %}
+                <span class="rounded-full border border-primary/15 bg-primary/5 px-3 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200">{{ tag }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </section>
 
-<div class="flex flex-col md:flex-row md:items-center justify-between mb-10 space-y-4 md:space-y-0 animate-rise-delay" id="projects">
+<section class="mb-20 animate-rise-delay" aria-labelledby="metrics-title">
+    <div class="mb-8">
+        <p class="text-xs font-bold uppercase tracking-wider text-primary">Quelques chiffres</p>
+        <h2 id="metrics-title" class="mt-2 text-2xl font-bold">Un profil orienté solutions concrètes</h2>
+    </div>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+        {% for metric in key_metrics %}
+        <div class="reveal-on-scroll rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+            <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <span class="material-icons">{{ metric.icon }}</span>
+            </div>
+            <p class="text-3xl font-bold">{{ metric.value }}</p>
+            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">{{ metric.label }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="mb-20" aria-labelledby="collaborations-title">
+    <div class="mb-6 max-w-2xl">
+        <p class="text-xs font-bold uppercase tracking-wider text-primary">Collaborations</p>
+        <h2 id="collaborations-title" class="mt-2 text-2xl font-bold">Des expériences sur des projets réels</h2>
+    </div>
+    <div class="reveal-on-scroll rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+        <div class="flex flex-wrap items-center gap-3">
+            {% for item in collaborations %}
+            <span class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 dark:border-slate-700 dark:text-slate-300">{{ item }}</span>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="mb-20" aria-labelledby="services-title">
+    <div class="mb-8 max-w-2xl">
+        <p class="text-xs font-bold uppercase tracking-wider text-primary">Services</p>
+        <h2 id="services-title" class="mt-2 text-2xl font-bold">Ce que je peux construire ou automatiser</h2>
+        <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">
+            Un accompagnement technique centré sur les besoins métier : développer, connecter, automatiser et déployer.
+        </p>
+    </div>
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+        {% for service in services %}
+        <article class="reveal-on-scroll rounded-lg border border-slate-200 bg-white p-5 transition-colors hover:border-primary/40 dark:border-slate-800 dark:bg-slate-900">
+            <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <span class="material-icons">{{ service.icon }}</span>
+            </div>
+            <h3 class="font-bold">{{ service.title }}</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">{{ service.description }}</p>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="mb-20" aria-labelledby="process-title">
+    <div class="mb-8 max-w-2xl">
+        <p class="text-xs font-bold uppercase tracking-wider text-primary">Processus</p>
+        <h2 id="process-title" class="mt-2 text-2xl font-bold">Une méthode simple pour passer de l'idée au produit</h2>
+    </div>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {% for step in process_steps %}
+        <article class="reveal-on-scroll flex gap-4 rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+            <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <span class="material-icons">{{ step.icon }}</span>
+            </div>
+            <div>
+                <h3 class="font-bold">{{ loop.index }}. {{ step.title }}</h3>
+                <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">{{ step.description }}</p>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="mb-20" aria-labelledby="automation-title">
+    <div class="mb-8 max-w-2xl">
+        <p class="text-xs font-bold uppercase tracking-wider text-primary">Automatisations IA</p>
+        <h2 id="automation-title" class="mt-2 text-2xl font-bold">Des workflows qui réduisent les tâches répétitives</h2>
+        <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">
+            Ces projets montrent comment j'utilise n8n, Make, OpenAI, OpenRouter, Google Workspace et des API pour automatiser des processus métier.
+        </p>
+    </div>
+    <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+        {% for project in automation_projects %}
+        <article class="reveal-on-scroll rounded-lg border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+            <div class="mb-4 flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-wider text-primary">{{ project.type_label }}</p>
+                    <h3 class="mt-1 text-lg font-bold">{{ project.title }}</h3>
+                </div>
+                <span class="material-icons text-primary">{{ project.icon or 'hub' }}</span>
+            </div>
+            <p class="text-sm leading-6 text-slate-500 dark:text-slate-400">{{ project.summary }}</p>
+            {% if project.case_study and project.case_study.workflow %}
+            <div class="mt-4 flex flex-wrap gap-2">
+                {% for step in project.case_study.workflow[:5] %}
+                <span class="rounded-full border border-slate-200 px-2.5 py-1 text-[10px] font-bold uppercase text-slate-500 dark:border-slate-700 dark:text-slate-300">{{ step }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="mb-10" id="projects">
+    <div class="max-w-2xl">
+        <p class="text-xs font-bold uppercase tracking-wider text-primary">Solutions livrées</p>
+        <h2 class="mt-2 text-2xl font-bold">Produits, plateformes et automatisations</h2>
+        <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">
+            Une sélection de réalisations présentées comme des cas concrets : contexte, problème, solution, rôle et résultats.
+        </p>
+    </div>
+</section>
+
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-10 space-y-4 md:space-y-0 animate-rise-delay">
     <div class="flex flex-wrap gap-2">
         {% for filter in project_filters %}
         <button
@@ -41,10 +184,12 @@
         data-title="{{ project.title | e }}"
         data-type-label="{{ project.type_label | e }}"
         data-description="{{ (project.description or project.summary or '') | e }}"
+        data-case-study='{{ (project.case_study or {}) | tojson }}'
         data-status-label="{{ project.status_label or '' }}"
         data-tags='{{ (project.tags or []) | tojson }}'
         data-github-url="{{ project.github_url or '' }}"
         data-demo-url="{{ project.demo_url or '' }}"
+        data-detail-url="{{ url_for('project_detail', slug=project.slug) }}"
         data-icon="{{ project.icon or 'folder' }}"
         role="button"
         tabindex="0"
@@ -130,6 +275,10 @@
                 <span class="text-[10px] font-bold px-2 py-0.5 rounded border border-primary/20 bg-primary/5 text-primary uppercase">{{ tag }}</span>
                 {% endfor %}
             </div>
+            <a class="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary/80" href="{{ url_for('project_detail', slug=project.slug) }}">
+                Étude de cas
+                <span class="material-icons text-base">arrow_forward</span>
+            </a>
         </div>
     </article>
     {% endfor %}
@@ -141,6 +290,17 @@
         <span class="material-icons text-lg">keyboard_arrow_down</span>
     </button>
 </div>
+
+<section class="mt-20 rounded-lg border border-primary/20 bg-primary/5 p-8 text-center" id="contact">
+    <p class="text-xs font-bold uppercase tracking-wider text-primary">Un projet à digitaliser ?</p>
+    <h2 class="mx-auto mt-2 max-w-2xl text-2xl font-bold">Je peux vous aider à concevoir une application, une API ou une automatisation IA adaptée à votre activité.</h2>
+    <div class="mt-6 flex justify-center">
+        <a class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 transition-colors hover:bg-primary/90" href="{{ config.contact_url or '#' }}">
+            <span class="material-icons text-lg">forum</span>
+            {{ config.contact_label | default('Me contacter') }}
+        </a>
+    </div>
+</section>
 
 <div id="project-modal" class="fixed inset-0 z-[100] hidden" aria-modal="true" aria-labelledby="project-modal-title" role="dialog">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="project-modal-backdrop"></div>
@@ -168,6 +328,7 @@
             </div>
             <div class="p-6 pt-4 flex-1 overflow-y-auto custom-scrollbar">
                 <p class="text-slate-600 dark:text-slate-300 mb-6" id="project-modal-description"></p>
+                <div class="space-y-4 mb-6" id="project-modal-case-study"></div>
                 <div class="flex flex-wrap gap-3 mb-6" id="project-modal-tech-icons" aria-hidden="true"></div>
                 <div class="flex flex-wrap gap-2 mb-6" id="project-modal-tags"></div>
                 <div class="flex flex-wrap gap-3" id="project-modal-links"></div>
