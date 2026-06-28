@@ -23,6 +23,7 @@
         "Python": "python.svg",
         "PostgreSQL": "postgresql.svg",
         "FastAPI": "fastapi.svg",
+        "Flutter": "flutter.svg",
         "Docker": "docker.svg",
         "Stripe": "stripe_wordmark.svg",
         "Next.js": "nextjs_icon_dark.svg",
@@ -46,6 +47,14 @@
         return file;
     }
 
+    function getFallbackMaterialIcon(tag) {
+        var icons = {
+            "Consommation API": "api",
+            "Redis": "storage",
+        };
+        return icons[tag] || null;
+    }
+
     function renderTechIcons(container, tags, maxIcons, fallbackCardIcon) {
         if (!container) return;
         container.innerHTML = "";
@@ -54,22 +63,32 @@
         var seen = {};
         (tags || []).forEach(function (tag) {
             var iconFile = getTechIconFile(tag);
-            if (!iconFile || seen[iconFile]) return;
-            seen[iconFile] = true;
-            icons.push({ tag: tag, file: iconFile });
+            var materialIcon = iconFile ? null : getFallbackMaterialIcon(tag);
+            var key = iconFile || materialIcon;
+            if (!key || seen[key]) return;
+            seen[key] = true;
+            icons.push({ tag: tag, file: iconFile, materialIcon: materialIcon });
         });
 
         var size = container.classList.contains("tech-icons-preview--small") ? "w-10 h-10" : "w-12 h-12";
 
         function makeBoxWithImg(icon) {
-            var img = document.createElement("img");
-            img.src = TECH_ICON_BASE + encodeURIComponent(icon.file);
-            img.alt = icon.tag;
-            img.className = "w-full h-full object-contain";
-
             var box = document.createElement("div");
             box.className = size + " rounded flex items-center justify-center";
-            box.appendChild(img);
+            box.title = icon.tag;
+
+            if (icon.file) {
+                var img = document.createElement("img");
+                img.src = TECH_ICON_BASE + encodeURIComponent(icon.file);
+                img.alt = icon.tag;
+                img.className = "w-full h-full object-contain";
+                box.appendChild(img);
+            } else {
+                var span = document.createElement("span");
+                span.className = "material-icons text-primary";
+                span.textContent = icon.materialIcon;
+                box.appendChild(span);
+            }
             return box;
         }
 
@@ -209,6 +228,102 @@
         appendCaseStudySection(container, "Résultats", caseStudy.results);
     }
 
+    function isPlatformFilter(filter) {
+        return ["web", "mobile", "api"].indexOf(filter) !== -1;
+    }
+
+    function filterPlatformStacks(stacks, filter) {
+        if (!stacks || stacks.length === 0) return [];
+        if (!isPlatformFilter(filter)) return stacks;
+
+        return stacks.filter(function (stack) {
+            return stack.type === filter;
+        });
+    }
+
+    function renderPlatformStacks(container, stacks, filter) {
+        if (!container) return;
+        container.innerHTML = "";
+        var visibleStacks = filterPlatformStacks(stacks, filter);
+        if (visibleStacks.length === 0) return;
+
+        visibleStacks.forEach(function (stack) {
+            var section = document.createElement("section");
+            section.className = "rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950/50";
+
+            var heading = document.createElement("h3");
+            heading.className = "text-xs font-bold uppercase tracking-wider text-primary";
+            heading.textContent = stack.label || "Plateforme";
+            section.appendChild(heading);
+
+            if (stack.description) {
+                var description = document.createElement("p");
+                description.className = "mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300";
+                description.textContent = stack.description;
+                section.appendChild(description);
+            }
+
+            var items = document.createElement("div");
+            items.className = "mt-3 flex flex-wrap gap-2";
+            (stack.items || []).forEach(function (item) {
+                var tag = document.createElement("span");
+                tag.className = "text-[10px] font-bold px-2 py-0.5 rounded border border-primary/20 bg-primary/5 text-primary uppercase";
+                tag.textContent = item;
+                items.appendChild(tag);
+            });
+            section.appendChild(items);
+            container.appendChild(section);
+        });
+    }
+
+    function getPlatformPreviewTags(stacks, fallbackTags, filter) {
+        if (!stacks || stacks.length === 0) return fallbackTags || [];
+
+        return filterPlatformStacks(stacks, filter)
+            .reduce(function (items, stack) {
+                return items.concat(stack.items || []);
+            }, [])
+            .filter(function (tag, index, items) {
+                return tag && items.indexOf(tag) === index;
+            });
+    }
+
+    function renderCardTechPreview(card, filter) {
+        var tags = parseTagsJson(card.getAttribute("data-tags"));
+        var platformStacks = parseTagsJson(card.getAttribute("data-platform-stacks"));
+        var previewTags = getPlatformPreviewTags(platformStacks, tags, filter);
+        var limit = platformStacks.length > 0 ? undefined : PREVIEW_COUNT;
+        var fallbackCardIcon = card.getAttribute("data-icon") || "folder";
+        card.querySelectorAll(".tech-icons-preview").forEach(function (container) {
+            renderTechIcons(container, previewTags, limit, fallbackCardIcon);
+        });
+    }
+
+    function renderModalPlatformIcons(container, stacks, tags, filter, fallbackIcon) {
+        if (!container) return;
+        if (!stacks || stacks.length === 0) {
+            renderTechIcons(container, tags, undefined, fallbackIcon);
+            container.classList.remove("hidden");
+            return;
+        }
+
+        var previewTags = getPlatformPreviewTags(stacks, tags, filter);
+        renderTechIcons(container, previewTags, undefined, fallbackIcon);
+        container.classList.toggle("hidden", previewTags.length === 0);
+    }
+
+    function updateCardStackView(card, filter) {
+        var stacks = parseTagsJson(card.getAttribute("data-platform-stacks"));
+        if (!stacks.length) return;
+
+        card.querySelectorAll(".platform-stack-card").forEach(function (stackEl) {
+            var stackType = stackEl.getAttribute("data-stack-type");
+            stackEl.classList.toggle("hidden", isPlatformFilter(filter) && stackType !== filter);
+        });
+
+        renderCardTechPreview(card, filter);
+    }
+
     function replayCardReveal(cards) {
         cards.forEach(function (card, index) {
             if (card.style.display === "none") return;
@@ -244,6 +359,9 @@
         var modalBackdrop = document.getElementById("project-modal-backdrop");
         var modalClose = document.getElementById("project-modal-close");
         var currentFilter = "all";
+        var allowedFilters = Array.prototype.map.call(filterBtns, function (btn) {
+            return btn.getAttribute("data-filter");
+        });
 
         if (!projectGrid) return;
 
@@ -267,6 +385,7 @@
                 if (show) totalMatching++;
                 card.style.display = show ? "" : "none";
                 if (show) {
+                    updateCardStackView(card, filter);
                     var isMore = index >= PREVIEW_COUNT;
                     card.classList.toggle("project-card--more", isMore);
                     card.style.display = isMore ? "none" : "";
@@ -290,6 +409,7 @@
             var typeLabel = card.getAttribute("data-type-label");
             var description = card.getAttribute("data-description");
             var caseStudy = parseJsonObject(card.getAttribute("data-case-study"));
+            var platformStacks = parseTagsJson(card.getAttribute("data-platform-stacks"));
             var statusLabel = card.getAttribute("data-status-label");
             var tagsJson = card.getAttribute("data-tags");
             var githubUrl = card.getAttribute("data-github-url");
@@ -313,17 +433,21 @@
             var tagsEl = document.getElementById("project-modal-tags");
             var modalTechIconsEl = document.getElementById("project-modal-tech-icons");
             var caseStudyEl = document.getElementById("project-modal-case-study");
+            var platformStacksEl = document.getElementById("project-modal-platform-stacks");
             tagsEl.innerHTML = "";
             modalTechIconsEl.innerHTML = "";
             renderCaseStudy(caseStudyEl, caseStudy);
+            renderPlatformStacks(platformStacksEl, platformStacks, currentFilter);
 
-            tags.forEach(function (tag) {
-                var span = document.createElement("span");
-                span.className = "text-[10px] font-bold px-2 py-0.5 rounded border border-primary/20 bg-primary/5 text-primary uppercase";
-                span.textContent = tag;
-                tagsEl.appendChild(span);
-            });
-            renderTechIcons(modalTechIconsEl, tags, undefined, icon);
+            if (platformStacks.length === 0) {
+                tags.forEach(function (tag) {
+                    var span = document.createElement("span");
+                    span.className = "text-[10px] font-bold px-2 py-0.5 rounded border border-primary/20 bg-primary/5 text-primary uppercase";
+                    span.textContent = tag;
+                    tagsEl.appendChild(span);
+                });
+            }
+            renderModalPlatformIcons(modalTechIconsEl, platformStacks, tags, currentFilter, icon);
 
             var linksEl = document.getElementById("project-modal-links");
             linksEl.innerHTML = "";
@@ -367,11 +491,7 @@
         });
 
         cards.forEach(function (card) {
-            var tags = parseTagsJson(card.getAttribute("data-tags"));
-            var fallbackCardIcon = card.getAttribute("data-icon") || "folder";
-            card.querySelectorAll(".tech-icons-preview").forEach(function (container) {
-                renderTechIcons(container, tags, PREVIEW_COUNT, fallbackCardIcon);
-            });
+            renderCardTechPreview(card, currentFilter);
 
             card.addEventListener("click", function (event) {
                 if (event.target.closest("a")) return;
@@ -408,8 +528,11 @@
             if (event.key === "Escape" && modal && !modal.classList.contains("hidden")) closeModal();
         });
 
-        setActiveFilter(document.querySelector(".filter-btn[data-filter=\"all\"]"));
-        updateVisibility("all");
+        var requestedFilter = new URLSearchParams(window.location.search).get("filter");
+        var initialFilter = allowedFilters.indexOf(requestedFilter) !== -1 ? requestedFilter : "all";
+        currentFilter = initialFilter;
+        setActiveFilter(document.querySelector(".filter-btn[data-filter=\"" + initialFilter + "\"]"));
+        updateVisibility(initialFilter);
     }
 
     initBackToTop();

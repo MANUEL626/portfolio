@@ -180,13 +180,14 @@
     <article
         class="project-card reveal-on-scroll group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-primary/5 hover:border-primary/30 transition-all duration-300 cursor-pointer {{ 'project-card--more' if loop.index > 3 else '' }}"
         data-type="{{ project.type }}"
-        data-types='{{ (project.types or [project.type]) | tojson }}'
+        data-types="{{ (project.types or [project.type]) | tojson | forceescape }}"
         data-title="{{ project.title | e }}"
         data-type-label="{{ project.type_label | e }}"
         data-description="{{ (project.description or project.summary or '') | e }}"
-        data-case-study='{{ (project.case_study or {}) | tojson }}'
+        data-case-study="{{ (project.case_study or {}) | tojson | forceescape }}"
+        data-platform-stacks="{{ (project.platform_stacks or []) | tojson | forceescape }}"
         data-status-label="{{ project.status_label or '' }}"
-        data-tags='{{ (project.tags or []) | tojson }}'
+        data-tags="{{ (project.tags or []) | tojson | forceescape }}"
         data-github-url="{{ project.github_url or '' }}"
         data-demo-url="{{ project.demo_url or '' }}"
         data-detail-url="{{ url_for('project_detail', slug=project.slug) }}"
@@ -270,11 +271,26 @@
                 <span class="material-icons text-xl text-slate-400" aria-hidden="true">{{ project.icon or 'folder' }}</span>
             </div>
             <p class="text-sm text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">{{ project.summary or project.description }}</p>
+            {% if project.platform_stacks %}
+            <div class="space-y-3">
+                {% for stack in project.platform_stacks %}
+                <div class="platform-stack-card rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-950/50" data-stack-type="{{ stack.type or '' }}">
+                    <p class="mb-2 text-[10px] font-bold uppercase tracking-wider text-primary">{{ stack.label }}</p>
+                    <div class="flex flex-wrap gap-1.5">
+                        {% for tag in stack["items"] %}
+                        <span class="rounded border border-primary/20 bg-primary/5 px-2 py-0.5 text-[9px] font-bold uppercase text-primary">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
             <div class="flex flex-wrap gap-2">
                 {% for tag in project.tags %}
                 <span class="text-[10px] font-bold px-2 py-0.5 rounded border border-primary/20 bg-primary/5 text-primary uppercase">{{ tag }}</span>
                 {% endfor %}
             </div>
+            {% endif %}
             <a class="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-primary/80" href="{{ url_for('project_detail', slug=project.slug) }}">
                 Étude de cas
                 <span class="material-icons text-base">arrow_forward</span>
@@ -329,6 +345,7 @@
             <div class="p-6 pt-4 flex-1 overflow-y-auto custom-scrollbar">
                 <p class="text-slate-600 dark:text-slate-300 mb-6" id="project-modal-description"></p>
                 <div class="space-y-4 mb-6" id="project-modal-case-study"></div>
+                <div class="space-y-4 mb-6" id="project-modal-platform-stacks"></div>
                 <div class="flex flex-wrap gap-3 mb-6" id="project-modal-tech-icons" aria-hidden="true"></div>
                 <div class="flex flex-wrap gap-2 mb-6" id="project-modal-tags"></div>
                 <div class="flex flex-wrap gap-3" id="project-modal-links"></div>

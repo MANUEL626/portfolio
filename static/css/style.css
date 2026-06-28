@@ -60,6 +60,10 @@ body {
         opacity 260ms ease;
 }
 
+.tech-icons-preview {
+    flex-wrap: wrap;
+}
+
 .project-card:hover .material-icons {
     transform: translateY(-1px) scale(1.08);
 }

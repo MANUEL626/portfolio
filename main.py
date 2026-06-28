@@ -38,6 +38,26 @@ def get_project_gallery(slug):
     ]
 
 
+def get_related_projects(project):
+    related_slugs = project.get("related_slugs", [])
+    if not related_slugs:
+        return []
+
+    return [item for slug in related_slugs if (item := get_project_by_slug(slug)) is not None]
+
+
+def get_platform_links(project):
+    return [
+        {
+            "label": stack.get("label"),
+            "description": stack.get("description"),
+            "url": url_for("index", filter=stack.get("type"), _anchor="projects"),
+        }
+        for stack in project.get("platform_stacks", [])
+        if stack.get("type") and stack.get("label")
+    ]
+
+
 @app.route("/")
 def index():
     automation_projects = [
@@ -65,21 +85,12 @@ def project_detail(slug):
         abort(404)
     gallery = project.get("gallery") or get_project_gallery(slug)
 
-    related_projects = [
-        item
-        for item in PROJECTS
-        if item.get("slug") != slug
-        and (
-            item.get("type") == project.get("type")
-            or bool(set(item.get("types", [item.get("type")])) & set(project.get("types", [project.get("type")])))
-        )
-    ][:3]
-
     return render_template(
         "project_detail.html",
         project=project,
         gallery=gallery,
-        related_projects=related_projects,
+        related_projects=get_related_projects(project),
+        platform_links=get_platform_links(project),
         config=SITE_CONFIG,
         back_url=url_for("index", _anchor="projects"),
     )
