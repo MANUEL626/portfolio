@@ -3,7 +3,34 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>{% block title %}Portfolio | Développeur Full Stack{% endblock %}</title>
+    <title>{{ seo.title if seo is defined and seo.title else 'Portfolio | Développeur Full Stack' }}</title>
+    <meta name="description" content="{{ seo.description if seo is defined and seo.description else config.site_description }}"/>
+    <meta name="keywords" content="{{ config.seo_keywords }}"/>
+    <meta name="author" content="{{ config.author_name }}"/>
+    <meta name="robots" content="index, follow"/>
+    <link rel="canonical" href="{{ seo.canonical_url if seo is defined and seo.canonical_url else config.site_url }}"/>
+    <meta property="og:locale" content="{{ config.locale | default('fr_FR') }}"/>
+    <meta property="og:type" content="{{ seo.type if seo is defined and seo.type else 'website' }}"/>
+    <meta property="og:title" content="{{ seo.title if seo is defined and seo.title else config.author_name }}"/>
+    <meta property="og:description" content="{{ seo.description if seo is defined and seo.description else config.site_description }}"/>
+    <meta property="og:url" content="{{ seo.canonical_url if seo is defined and seo.canonical_url else config.site_url }}"/>
+    <meta property="og:site_name" content="{{ config.site_name }}"/>
+    <meta property="og:image" content="{{ seo.image_url if seo is defined and seo.image_url else url_for('static', filename='favicon.svg', _external=True) }}"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:title" content="{{ seo.title if seo is defined and seo.title else config.author_name }}"/>
+    <meta name="twitter:description" content="{{ seo.description if seo is defined and seo.description else config.site_description }}"/>
+    <meta name="twitter:image" content="{{ seo.image_url if seo is defined and seo.image_url else url_for('static', filename='favicon.svg', _external=True) }}"/>
+    <script type="application/ld+json">
+        {{ {
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": config.author_name,
+            "jobTitle": config.author_title,
+            "url": config.site_url,
+            "sameAs": [config.github_url, config.linkedin_url] | reject('none') | list,
+            "knowsAbout": ["Python", "FastAPI", "Flutter", "Next.js", "Supabase", "IA", "Automatisation"]
+        } | tojson }}
+    </script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
